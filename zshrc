@@ -128,7 +128,7 @@ alias ..='cd ..'
 PATH=$PATH:/Users/jkozdon/opt/bin
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-export ZSH_AUTOSUGGEST_STRATEGY=()
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 # source ~/bin/fzf-tab/fzf-tab.plugin.zsh
 FZF_TAB_COMMAND=(
     fzf
