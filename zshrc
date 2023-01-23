@@ -119,7 +119,7 @@ export EDITOR='vim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias ls='ls -G'
+alias ls='ls --color'
 alias grep='grep --color'
 alias mv='mv -i'
 alias rm='rm -i'
@@ -146,6 +146,8 @@ zstyle ':fzf-tab:*' command $FZF_TAB_COMMAND
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f $ZSH_CUSTOM/p10k.zsh ]] || source $ZSH_CUSTOM/p10k.zsh
 
+autoload bashcompinit
+bashcompinit
 if [[ -r "$HOME/.bashrc.jeremyk" ]]; then
     source "$HOME/.bashrc.jeremyk"
 fi
