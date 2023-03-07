@@ -214,6 +214,12 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
+vim.cmd([[
+  autocmd FileType gitcommit setlocal spell
+  autocmd FileType gitcommit setlocal previewheight=0
+  autocmd FileType gitcommit DiffGitCached | :wincmd J
+]])
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
