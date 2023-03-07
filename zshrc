@@ -126,6 +126,7 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias ..='cd ..'
 PATH=$PATH:/Users/jkozdon/opt/bin
+PATH=$PATH:/Applications/Julia-1.8.app/Contents/Resources/julia/bin/
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
