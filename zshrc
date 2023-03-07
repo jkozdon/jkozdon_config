@@ -127,6 +127,8 @@ alias cp='cp -i'
 alias ..='cd ..'
 PATH=$PATH:/Users/jkozdon/opt/bin
 PATH=$PATH:/Applications/Julia-1.8.app/Contents/Resources/julia/bin/
+alias tmuxdetachothers='tmux detach-client -a'
+>>>>>>> 5ccc355 (Tweak config)
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -152,3 +154,5 @@ bashcompinit
 if [[ -r "$HOME/.bashrc.jeremyk" ]]; then
     source "$HOME/.bashrc.jeremyk"
 fi
+
+export CMAKE_EXPORT_COMPILE_COMMANDS=ON
