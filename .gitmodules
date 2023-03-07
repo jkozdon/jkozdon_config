@@ -1,15 +1,15 @@
 [submodule "ohmyzsh"]
-	path = ohmyzsh
+	path = zsh/ohmyzsh
 	url = https://github.com/ohmyzsh/ohmyzsh.git
 [submodule "ohmyzsh_custom/plugins/fzf-tab"]
-	path = ohmyzsh_custom/plugins/fzf-tab
+	path = zsh/ohmyzsh_custom/plugins/fzf-tab
 	url = https://github.com/Aloxaf/fzf-tab
 [submodule "ohmyzsh_custom/plugins/fzf-zsh-plugin"]
-	path = ohmyzsh_custom/plugins/fzf-zsh-plugin
+	path = zsh/ohmyzsh_custom/plugins/fzf-zsh-plugin
 	url = https://github.com/unixorn/fzf-zsh-plugin.git
 [submodule "ohmyzsh_custom/plugins/zsh-autosuggestions"]
-	path = ohmyzsh_custom/plugins/zsh-autosuggestions
+	path = zsh/ohmyzsh_custom/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
 [submodule "ohmyzsh_custom/themes/powerlevel10k"]
-	path = ohmyzsh_custom/themes/powerlevel10k
+	path = zsh/ohmyzsh_custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
