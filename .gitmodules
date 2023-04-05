@@ -13,3 +13,6 @@
 [submodule "ohmyzsh_custom/themes/powerlevel10k"]
 	path = zsh/ohmyzsh_custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "zsh/ohmyzsh_custom/plugins/zsh-fzf-history-search"]
+	path = zsh/ohmyzsh_custom/plugins/zsh-fzf-history-search
+	url = git@github.com:joshskidmore/zsh-fzf-history-search

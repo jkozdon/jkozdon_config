@@ -93,7 +93,14 @@ require('lazy').setup({
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'amarakon/nvim-cmp-buffer-lines',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+    },
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -519,8 +526,10 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
+    { name = 'nvim_lsp', keyword_length = 10  },
+    { name = 'luasnip', keyword_length = 10  },
+    { name = 'buffer', keyword_length = 10 },
+    { name = 'path', keyword_length = 10  },
   },
 }
 
