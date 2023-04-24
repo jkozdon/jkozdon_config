@@ -223,12 +223,45 @@ require('lazy').setup({
   --    An additional note is that if you only copied in the `init.lua`, you can just comment this line
   --    to get rid of the warning telling you that there are not plugins in `lua/custom/plugins/`.
   -- { import = 'custom.plugins' },
+
+  {
+    "nvim-neorg/neorg",
+    build = ":Neorg sync-parsers",
+    opts = {
+      load = {
+            ["core.defaults"] = {}, -- Loads default behaviour
+            ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
+            ["core.integrations.nvim-cmp"] = {},
+            ["core.concealer"] = { config = { icon_preset = "diamond" } },
+            ["core.dirman"] = { -- Manages Neorg workspaces
+          config = {
+            workspaces = {
+              nextsilicon = "~/jeremy.kozdon/norg",
+            },
+            default_workspace = "nextsilicon",
+          },
+        },
+            ["core.export"] = {},
+            ["core.keybinds"] = {
+          -- https://github.com/nvim-neorg/neorg/blob/main/lua/neorg/modules/core/keybinds/keybinds.lua
+          config = {
+            default_keybinds = true,
+            neorg_leader = "<Leader><Leader>",
+          },
+
+        },
+      },
+      dependencies = { { "nvim-lua/plenary.nvim" } },
+    }
+  }
 }, {})
 
 vim.cmd([[
   autocmd FileType gitcommit setlocal spell
   autocmd FileType gitcommit setlocal previewheight=0
   autocmd FileType gitcommit DiffGitCached | :wincmd J
+  autocmd BufEnter *.norg set conceallevel=2
+  autocmd BufEnter *.c set conceallevel=0
 ]])
 
 -- [[ Setting options ]]
