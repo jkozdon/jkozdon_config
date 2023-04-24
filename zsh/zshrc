@@ -126,6 +126,9 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias ..='cd ..'
 alias qu='squeue -l'
+alias vim='nvim'
+alias vim='nvim -d'
+
 PATH=$PATH:/Users/jkozdon/opt/bin
 PATH=$PATH:/Applications/Julia-1.8.app/Contents/Resources/julia/bin/
 alias tmuxdetachothers='tmux detach-client -a'
