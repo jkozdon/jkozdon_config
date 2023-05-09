@@ -232,7 +232,7 @@ require('lazy').setup({
             ["core.defaults"] = {}, -- Loads default behaviour
             ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
             ["core.integrations.nvim-cmp"] = {},
-            ["core.concealer"] = { config = { icon_preset = "diamond" } },
+            ["core.concealer"] = { config = { icon_preset = "diamond", folds = false } },
             ["core.dirman"] = { -- Manages Neorg workspaces
           config = {
             workspaces = {
@@ -262,6 +262,7 @@ vim.cmd([[
   autocmd FileType gitcommit DiffGitCached | :wincmd J
   autocmd BufEnter *.norg set conceallevel=2
   autocmd BufEnter *.c set conceallevel=0
+  :autocmd FileType norg :iabbrev <expr> idate system('date +%F')
 ]])
 
 -- [[ Setting options ]]
