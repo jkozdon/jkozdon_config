@@ -151,6 +151,9 @@ require('lazy').setup({
     'jpalardy/vim-slime',
     vim.api.nvim_set_var('slime_target', 'tmux'),
     vim.cmd('let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": "{last}"}'),
+    vim.cmd('let g:slime_cell_delimiter = "@"'),
+    vim.cmd('nmap <leader>s <Plug>SlimeSendCell')
+
   },
 
   {
@@ -359,6 +362,7 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
