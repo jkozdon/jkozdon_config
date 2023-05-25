@@ -128,10 +128,13 @@ alias ..='cd ..'
 alias qu='squeue -l'
 alias vim='nvim'
 alias vimdiff='nvim -d'
+alias gitfetchall='git remote | xargs -L 1 git fetch'
 
+PATH=/opt/local/bin:/opt/local/sbin:$PATH
 PATH=$PATH:/Users/jkozdon/opt/bin
 PATH=$PATH:/Applications/Julia-1.8.app/Contents/Resources/julia/bin/
 alias tmuxdetachothers='tmux detach-client -a'
+PATH=$PATH:/opt/bin
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
