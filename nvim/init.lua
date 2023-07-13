@@ -100,7 +100,7 @@ require('lazy').setup({
       'saadparwaiz1/cmp_luasnip',
       'amarakon/nvim-cmp-buffer-lines',
       'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
+      -- 'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
     },
   },
@@ -232,11 +232,24 @@ require('lazy').setup({
     build = ":Neorg sync-parsers",
     opts = {
       load = {
-            ["core.defaults"] = {}, -- Loads default behaviour
-            ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
-            ["core.integrations.nvim-cmp"] = {},
-            ["core.concealer"] = { config = { icon_preset = "diamond", folds = false } },
-            ["core.dirman"] = { -- Manages Neorg workspaces
+        -- ["core.defaults"] = {},          -- Loads default behaviour
+        -- ["core.clipboard.code"] = {},    -- blocks - Removes beginning whitespace from text copied from code blocks.
+        ["core.esupports.hop"] = {},     --  "Hop" between Neorg links, following them with a single keypress.
+        ["core.esupports.indent"] = {},  --  A set of instructions for Neovim to indent Neorg documents.
+        ["core.esupports.metagen"] = {}, --  A Neorg module for generating document metadata automatically.
+        ["core.itero"] = {},             --  Module designed to continue lists, headings and other iterables.
+        ["core.journal"] = {},           --  Easily track a journal within Neorg.
+        ["core.looking-glass"] = {},     -- Allows for editing of code blocks within a separate buffer.
+        ["core.pivot"] = {},             --  Toggles the type of list currently under the cursor.
+        ["core.promo"] = {},             --  Promotes or demotes nestable items within Neorg files.
+        ["core.qol.toc"] = {},           --  Generates a table of contents for a given Norg buffer.
+        ["core.qol.todo_items"] = {},    --  Module for implementing todo lists.
+        ["core.tangle"] = {},            --  An Advanced Code Block Exporter.
+        ["core.upgrade"] = {},           --  Converts old versions of the Norg syntax to newer ones.
+        ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
+        ["core.integrations.nvim-cmp"] = {},
+        ["core.concealer"] = { config = { icon_preset = "diamond", folds = false } },
+        ["core.dirman"] = {     -- Manages Neorg workspaces
           config = {
             workspaces = {
               nextsilicon = "~/jeremy.kozdon/norg",
@@ -244,8 +257,8 @@ require('lazy').setup({
             default_workspace = "nextsilicon",
           },
         },
-            ["core.export"] = {},
-            ["core.keybinds"] = {
+        ["core.export"] = {},
+        ["core.keybinds"] = {
           -- https://github.com/nvim-neorg/neorg/blob/main/lua/neorg/modules/core/keybinds/keybinds.lua
           config = {
             default_keybinds = true,
@@ -336,8 +349,8 @@ require('telescope').setup {
   defaults = {
     mappings = {
       i = {
-            ['<C-u>'] = false,
-            ['<C-d>'] = false,
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
       },
     },
   },
@@ -390,41 +403,41 @@ require('nvim-treesitter.configs').setup {
       lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
       keymaps = {
         -- You can use the capture groups defined in textobjects.scm
-            ['aa'] = '@parameter.outer',
-            ['ia'] = '@parameter.inner',
-            ['af'] = '@function.outer',
-            ['if'] = '@function.inner',
-            ['ac'] = '@class.outer',
-            ['ic'] = '@class.inner',
+        ['aa'] = '@parameter.outer',
+        ['ia'] = '@parameter.inner',
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
       },
     },
     move = {
       enable = true,
       set_jumps = true, -- whether to set jumps in the jumplist
       goto_next_start = {
-            [']m'] = '@function.outer',
-            [']]'] = '@class.outer',
+        [']m'] = '@function.outer',
+        [']]'] = '@class.outer',
       },
       goto_next_end = {
-            [']M'] = '@function.outer',
-            [']['] = '@class.outer',
+        [']M'] = '@function.outer',
+        [']['] = '@class.outer',
       },
       goto_previous_start = {
-            ['[m'] = '@function.outer',
-            ['[['] = '@class.outer',
+        ['[m'] = '@function.outer',
+        ['[['] = '@class.outer',
       },
       goto_previous_end = {
-            ['[M'] = '@function.outer',
-            ['[]'] = '@class.outer',
+        ['[M'] = '@function.outer',
+        ['[]'] = '@class.outer',
       },
     },
     swap = {
       enable = true,
       swap_next = {
-            ['<leader>a'] = '@parameter.inner',
+        ['<leader>a'] = '@parameter.inner',
       },
       swap_previous = {
-            ['<leader>A'] = '@parameter.inner',
+        ['<leader>A'] = '@parameter.inner',
       },
     },
   },
@@ -499,6 +512,17 @@ local servers = {
       telemetry = { enable = false },
     },
   },
+
+  pylsp = {
+    pylsp = {
+      plugins = {
+        flake8 = {
+          enabled = true,
+        }
+      }
+    }
+  },
+
 }
 
 -- Setup neovim lua configuration
@@ -541,14 +565,14 @@ cmp.setup {
     end,
   },
   mapping = cmp.mapping.preset.insert {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete {},
-        ['<CR>'] = cmp.mapping.confirm {
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete {},
+    ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-        ['<Tab>'] = cmp.mapping(function(fallback)
+    ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
       elseif luasnip.expand_or_jumpable() then
@@ -557,7 +581,7 @@ cmp.setup {
         fallback()
       end
     end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
       elseif luasnip.jumpable(-1) then
@@ -582,7 +606,7 @@ cmp.setup.cmdline('/', {
 })
 cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline {
-        ['<CR>'] = cmp.mapping(
+    ['<CR>'] = cmp.mapping(
       function(fallback)
         if cmp.visible() and cmp.get_active_entry() then
           cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
