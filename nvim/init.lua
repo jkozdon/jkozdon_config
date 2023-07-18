@@ -232,24 +232,17 @@ require('lazy').setup({
     build = ":Neorg sync-parsers",
     opts = {
       load = {
-        -- ["core.defaults"] = {},          -- Loads default behaviour
-        -- ["core.clipboard.code"] = {},    -- blocks - Removes beginning whitespace from text copied from code blocks.
-        ["core.esupports.hop"] = {},     --  "Hop" between Neorg links, following them with a single keypress.
-        ["core.esupports.indent"] = {},  --  A set of instructions for Neovim to indent Neorg documents.
-        ["core.esupports.metagen"] = {}, --  A Neorg module for generating document metadata automatically.
-        ["core.itero"] = {},             --  Module designed to continue lists, headings and other iterables.
-        ["core.journal"] = {},           --  Easily track a journal within Neorg.
-        ["core.looking-glass"] = {},     -- Allows for editing of code blocks within a separate buffer.
-        ["core.pivot"] = {},             --  Toggles the type of list currently under the cursor.
-        ["core.promo"] = {},             --  Promotes or demotes nestable items within Neorg files.
-        ["core.qol.toc"] = {},           --  Generates a table of contents for a given Norg buffer.
-        ["core.qol.todo_items"] = {},    --  Module for implementing todo lists.
-        ["core.tangle"] = {},            --  An Advanced Code Block Exporter.
-        ["core.upgrade"] = {},           --  Converts old versions of the Norg syntax to newer ones.
+        ["core.defaults"] = {
+          config = {
+            disable = {
+              "core.clipboard.code-blocks",
+            },
+          },
+        }, -- Loads default behaviour
         ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
         ["core.integrations.nvim-cmp"] = {},
         ["core.concealer"] = { config = { icon_preset = "diamond", folds = false } },
-        ["core.dirman"] = {     -- Manages Neorg workspaces
+        ["core.dirman"] = { -- Manages Neorg workspaces
           config = {
             workspaces = {
               nextsilicon = "~/jeremy.kozdon/norg",
@@ -263,6 +256,10 @@ require('lazy').setup({
           config = {
             default_keybinds = true,
             neorg_leader = "<Leader><Leader>",
+            hook = function(keybinds)
+              keybinds.map_event("norg", "n", "<localleader>cz", "core.looking-glass.magnify-code-block")
+            end,
+
           },
 
         },
