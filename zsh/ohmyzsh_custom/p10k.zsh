@@ -54,6 +54,7 @@
     vcs                       # git status
     command_execution_time    # previous command duration
     # =========================[ Line #2 ]=========================
+    coredumps
     newline                   # \n
     virtualenv                # python virtual environment
     prompt_char               # prompt symbol
@@ -197,3 +198,11 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
 
 (( ${#p10k_config_opts} )) && setopt ${p10k_config_opts[@]}
 'builtin' 'unset' 'p10k_config_opts'
+
+  function prompt_coredumps() {
+    local DIR_COREDUMPS="/coredumps"
+    if [[ -d "$DIR_COREDUMPS" ]] && [[ `ls -A "$DIR_COREDUMPS"` ]]; then
+      p10k segment -t "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
+    fi
+      return
+  }
