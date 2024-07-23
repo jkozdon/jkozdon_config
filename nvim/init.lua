@@ -152,9 +152,33 @@ require('lazy').setup({
     vim.api.nvim_set_var('slime_target', 'tmux'),
     vim.cmd('let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": "{last}"}'),
     vim.cmd('let g:slime_cell_delimiter = "@"'),
-    vim.cmd('nmap <leader>s <Plug>SlimeSendCell')
-
+    -- vim.cmd('nmap <leader>s <Plug>SlimeSendCell')
   },
+
+  {
+    'github/copilot.vim',
+    -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
+    -- vim.cmd('let g:copilot_no_tab_map = v:true')
+    config = function()
+      vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("")')
+      vim.cmd('let g:copilot_no_tab_map = v:true')
+    end,
+  },
+
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "canary",
+    dependencies = {
+      { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+    },
+    opts = {
+      -- debug = true, -- Enable debugging
+      -- See Configuration section for rest
+    },
+    -- See Commands section for default commands if you want to lazy load on them
+  },
+
 
   {
     -- Set lualine as statusline
@@ -170,16 +194,17 @@ require('lazy').setup({
     },
   },
 
-  {
-    -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
-  },
+  -- {
+  --   -- Add indentation guides even on blank lines
+  --   'lukas-reineke/indent-blankline.nvim',
+  --   main = "ibl",
+  --   -- Enable `lukas-reineke/indent-blankline.nvim`
+  --   -- See `:help ibl`
+  --   opts = {
+  --     -- char = '┊',
+  --     -- show_trailing_blankline_indent = false,
+  --   },
+  -- },
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim',         opts = {} },
@@ -190,15 +215,6 @@ require('lazy').setup({
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
   -- Only load if `make` is available. Make sure you have the system
   -- requirements installed.
-  {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    -- NOTE: If you are having trouble with this installation,
-    --       refer to the README for telescope-fzf-native for more instructions.
-    build = 'make',
-    cond = function()
-      return vim.fn.executable 'make' == 1
-    end,
-  },
 
   {
     -- Highlight, edit, and navigate code
@@ -227,46 +243,46 @@ require('lazy').setup({
   --    to get rid of the warning telling you that there are not plugins in `lua/custom/plugins/`.
   -- { import = 'custom.plugins' },
 
-  {
-    "nvim-neorg/neorg",
-    build = ":Neorg sync-parsers",
-    opts = {
-      load = {
-        ["core.defaults"] = {
-          config = {
-            disable = {
-              "core.clipboard.code-blocks",
-            },
-          },
-        }, -- Loads default behaviour
-        ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
-        ["core.integrations.nvim-cmp"] = {},
-        ["core.concealer"] = { config = { icon_preset = "diamond", folds = false } },
-        ["core.dirman"] = { -- Manages Neorg workspaces
-          config = {
-            workspaces = {
-              nextsilicon = "~/jeremy.kozdon/norg",
-            },
-            default_workspace = "nextsilicon",
-          },
-        },
-        ["core.export"] = {},
-        ["core.keybinds"] = {
-          -- https://github.com/nvim-neorg/neorg/blob/main/lua/neorg/modules/core/keybinds/keybinds.lua
-          config = {
-            default_keybinds = true,
-            neorg_leader = "<Leader><Leader>",
-            hook = function(keybinds)
-              keybinds.map_event("norg", "n", "<localleader>cz", "core.looking-glass.magnify-code-block")
-            end,
+  -- {
+  --   "nvim-neorg/neorg",
+  --   build = ":Neorg sync-parsers",
+  --   opts = {
+  --     load = {
+  --       ["core.defaults"] = {
+  --         config = {
+  --           disable = {
+  --             "core.clipboard.code-blocks",
+  --           },
+  --         },
+  --       }, -- Loads default behaviour
+  --       ["core.completion"] = { config = { engine = "nvim-cmp", name = "[Norg]" } },
+  --       ["core.integrations.nvim-cmp"] = {},
+  --       ["core.concealer"] = { config = { icon_preset = "diamond", folds = false } },
+  --       ["core.dirman"] = { -- Manages Neorg workspaces
+  --         config = {
+  --           workspaces = {
+  --             nextsilicon = "~/jeremy.kozdon/norg",
+  --           },
+  --           default_workspace = "nextsilicon",
+  --         },
+  --       },
+  --       ["core.export"] = {},
+  --       ["core.keybinds"] = {
+  --         -- https://github.com/nvim-neorg/neorg/blob/main/lua/neorg/modules/core/keybinds/keybinds.lua
+  --         config = {
+  --           default_keybinds = true,
+  --           neorg_leader = "<Leader><Leader>",
+  --           hook = function(keybinds)
+  --             keybinds.map_event("norg", "n", "<localleader>cz", "core.looking-glass.magnify-code-block")
+  --           end,
 
-          },
+  --         },
 
-        },
-      },
-      dependencies = { { "nvim-lua/plenary.nvim" } },
-    }
-  }
+  --       },
+  --     },
+  --     dependencies = { { "nvim-lua/plenary.nvim" } },
+  --   }
+  -- }
 }, {})
 
 vim.cmd([[
@@ -553,7 +569,7 @@ mason_lspconfig.setup_handlers {
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
-
+require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 cmp.setup {
@@ -562,8 +578,13 @@ cmp.setup {
       luasnip.lsp_expand(args.body)
     end,
   },
+  completion = {
+    completeopt = 'menu,menuone,noinsert',
+  },
   mapping = cmp.mapping.preset.insert {
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
@@ -573,7 +594,7 @@ cmp.setup {
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
+      elseif luasnip.expand_or_locally_jumpable() then
         luasnip.expand_or_jump()
       else
         fallback()
@@ -582,7 +603,7 @@ cmp.setup {
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
+      elseif luasnip.locally_jumpable(-1) then
         luasnip.jump(-1)
       else
         fallback()
@@ -590,12 +611,13 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   sources = {
-    { name = 'nvim_lsp', keyword_length = 10 },
-    { name = 'luasnip',  keyword_length = 10 },
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
     { name = 'buffer',   keyword_length = 10 },
-    { name = 'path',     keyword_length = 10 },
+    { name = 'path' },
   },
 }
+
 cmp.setup.cmdline('/', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
