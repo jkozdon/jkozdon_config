@@ -97,7 +97,7 @@ require('lazy').setup({
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
       'L3MON4D3/LuaSnip',
-      'saadparwaiz1/cmp_luasnip',
+      -- 'saadparwaiz1/cmp_luasnip',
       'amarakon/nvim-cmp-buffer-lines',
       'hrsh7th/cmp-buffer',
       -- 'hrsh7th/cmp-path',
@@ -175,6 +175,12 @@ require('lazy').setup({
     opts = {
       -- debug = true, -- Enable debugging
       -- See Configuration section for rest
+      mappings = {
+        reset = {
+          normal ='<C-m>',
+          insert = '<C-m>'
+        },
+      },
     },
     -- See Commands section for default commands if you want to lazy load on them
   },
@@ -205,6 +211,7 @@ require('lazy').setup({
   --     -- show_trailing_blankline_indent = false,
   --   },
   -- },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim',         opts = {} },
