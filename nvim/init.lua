@@ -151,8 +151,8 @@ require('lazy').setup({
     'jpalardy/vim-slime',
     vim.api.nvim_set_var('slime_target', 'tmux'),
     vim.cmd('let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": "{last}"}'),
-    vim.cmd('let g:slime_cell_delimiter = "@"'),
-    -- vim.cmd('nmap <leader>s <Plug>SlimeSendCell')
+    vim.cmd('let g:slime_cell_delimiter = "```"'),
+    vim.cmd('nmap <leader>s <Plug>SlimeSendCell'),
   },
 
   {
@@ -164,12 +164,11 @@ require('lazy').setup({
       vim.cmd('let g:copilot_no_tab_map = v:true')
     end,
   },
-
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = "canary",
     dependencies = {
-      { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+      { "github/copilot.vim" },
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
     opts = {
@@ -181,11 +180,12 @@ require('lazy').setup({
           insert = '<C-m>'
         },
       },
+      window = {
+        layout = "horizontal",
+      },
+      -- See Commands section for default commands if you want to lazy load on them
     },
-    -- See Commands section for default commands if you want to lazy load on them
   },
-
-
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -298,7 +298,7 @@ vim.cmd([[
   autocmd FileType gitcommit DiffGitCached | :wincmd J
   autocmd BufEnter *.norg set conceallevel=2
   autocmd BufEnter *.c set conceallevel=0
-  :autocmd FileType norg :iabbrev <expr> idate system('date +%F')
+  autocmd FileType markdown :iabbrev <expr> idate system('date +%F')
 ]])
 
 -- [[ Setting options ]]
@@ -368,6 +368,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    vimgrep_arguments = {
+      'rg',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      '--glob=!build*'
+    },
     mappings = {
       i = {
         ['<C-u>'] = false,

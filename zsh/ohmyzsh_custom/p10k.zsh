@@ -202,7 +202,7 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
   function prompt_coredumps() {
     local DIR_COREDUMPS="/coredumps"
     if [[ -d "$DIR_COREDUMPS" ]] && [[ `ls -A "$DIR_COREDUMPS"` ]]; then
-      p10k segment -t "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
+      p10k segment -t "🚨🚨"
     fi
       return
   }
