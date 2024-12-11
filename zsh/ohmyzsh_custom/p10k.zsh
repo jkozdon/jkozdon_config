@@ -66,6 +66,7 @@
     # virtualenv              # python virtual environment
     # context                 # user@host
     coredumps
+    binfmt
     time                      # current time
     # =========================[ Line #2 ]=========================
     newline                   # \n
@@ -203,6 +204,15 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
     local DIR_COREDUMPS="/coredumps"
     if [[ -d "$DIR_COREDUMPS" ]] && [[ `ls -A "$DIR_COREDUMPS"` ]]; then
       p10k segment -t "🚨🚨"
+    fi
+    return
+  }
+
+  function prompt_binfmt() {
+    local BINFMT_FILE="/etc/binfmt.d/nextloader.conf"
+    local magenta='5'
+    if [[ -e "$BINFMT_FILE" ]]; then
+       p10k segment -t "[binfmt]" -f $magenta
     fi
     return
   }
