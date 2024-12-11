@@ -54,7 +54,6 @@
     vcs                       # git status
     command_execution_time    # previous command duration
     # =========================[ Line #2 ]=========================
-    coredumps
     newline                   # \n
     virtualenv                # python virtual environment
     prompt_char               # prompt symbol
@@ -66,6 +65,7 @@
     # command_execution_time  # previous command duration
     # virtualenv              # python virtual environment
     # context                 # user@host
+    coredumps
     time                      # current time
     # =========================[ Line #2 ]=========================
     newline                   # \n
@@ -204,5 +204,5 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
     if [[ -d "$DIR_COREDUMPS" ]] && [[ `ls -A "$DIR_COREDUMPS"` ]]; then
       p10k segment -t "🚨🚨"
     fi
-      return
+    return
   }
