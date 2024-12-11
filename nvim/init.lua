@@ -105,6 +105,13 @@ require('lazy').setup({
     },
   },
 
+    {
+    "mbbill/undotree",
+    cmd = "UndotreeToggle", -- Lazy load when the command is run
+    keys = { "<leader>u" }, -- Optional: Map a key to toggle Undotree
+  },
+
+
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim',          opts = {} },
   {

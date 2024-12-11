@@ -1,3 +1,5 @@
+ZSH_DISABLE_COMPFIX=true
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -130,11 +132,10 @@ alias vim='nvim'
 alias vimdiff='nvim -d'
 alias gitfetchall='git remote | xargs -L 1 git fetch'
 
-PATH=/opt/local/bin:/opt/local/sbin:$PATH
-PATH=$PATH:$HOME/opt/bin
-PATH=$PATH:/Applications/Julia-1.8.app/Contents/Resources/julia/bin/
+# PATH=/opt/local/bin:/opt/local/sbin:$PATH
+# PATH=$PATH:$HOME/opt/bin
 alias tmuxdetachothers='tmux detach-client -a'
-PATH=$PATH:/opt/bin
+# PATH=$PATH:/opt/bin
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -163,7 +164,7 @@ if [[ -r "$HOME/.bashrc.jeremyk" ]]; then
 fi
 
 export CMAKE_EXPORT_COMPILE_COMMANDS=ON
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+# export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 # To use the bundled libc++ please add the following LDFLAGS:
 #   LDFLAGS="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
 # 
@@ -178,3 +179,6 @@ export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 #   export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 #   export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
