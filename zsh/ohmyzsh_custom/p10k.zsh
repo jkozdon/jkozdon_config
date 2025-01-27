@@ -53,9 +53,11 @@
     dir                       # current directory
     vcs                       # git status
     command_execution_time    # previous command duration
+    binfmt
+    coredumps
     # =========================[ Line #2 ]=========================
     newline                   # \n
-    virtualenv                # python virtual environment
+    nexthome_virtualenv       # NEXT_HOME or python virtual environment
     prompt_char               # prompt symbol
   )
 
@@ -65,8 +67,6 @@
     # command_execution_time  # previous command duration
     # virtualenv              # python virtual environment
     # context                 # user@host
-    coredumps
-    binfmt
     time                      # current time
     # =========================[ Line #2 ]=========================
     newline                   # \n
@@ -201,9 +201,10 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
 'builtin' 'unset' 'p10k_config_opts'
 
   function prompt_coredumps() {
+    local red='1'
     local DIR_COREDUMPS="/coredumps"
     if [[ -d "$DIR_COREDUMPS" ]] && [[ `ls -A "$DIR_COREDUMPS"` ]]; then
-      p10k segment -t "🚨🚨"
+      p10k segment -t "🚨%F{$red}${DIR_COREDUMPS}%f🚨"
     fi
     return
   }
@@ -211,8 +212,47 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
   function prompt_binfmt() {
     local BINFMT_FILE="/etc/binfmt.d/nextloader.conf"
     local magenta='5'
+    local code=''
     if [[ -e "$BINFMT_FILE" ]]; then
-       p10k segment -t "[binfmt]" -f $magenta
+       if [[ $code ]]; then
+         code="${code}|"
+       fi
+       code="${code}bf"
+    fi
+    if [[ `pgrep nextengine` ]]; then
+      if [[ $code ]]; then
+        code="${code}|"
+      fi
+      code="${code}ne"
+    fi
+    if [[ `pgrep nextdaemon` ]]; then
+      if [[ $code ]]; then
+        code="${code}|"
+      fi
+      code="${code}nd"
+    fi
+    if [[ `pgrep elrond` ]]; then
+      if [[ $code ]]; then
+        code="${code}|"
+      fi
+      code="${code}el"
+    fi
+    if [[ $code ]]; then
+      p10k segment -t "%F{$magenta}[${code}]%f"
+    fi
+    return
+  }
+
+  function prompt_nexthome_virtualenv() {
+    local grey='242'
+    if [[ -n "$NEXT_HOME" ]]; then
+      local env=$(basename $(dirname $NEXT_HOME/))
+      if [[ "$NEXT_HOME" == "/opt/nextsilicon" ]]; then
+        env="system"
+      fi
+      p10k segment -t "%F{$grey}[env: ${env}]%f"
+    else
+      prompt_virtualenv
     fi
     return
   }
