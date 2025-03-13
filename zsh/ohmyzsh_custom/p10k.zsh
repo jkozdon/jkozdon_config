@@ -32,11 +32,14 @@
   # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
-    context                   # user@host
+    context                 # user@host
     dir                     # current directory
+    binfmt
+    coredumps
     vcs                     # git status
     # =========================[ Line #2 ]=========================
     newline                 # \n
+    nexthome_virtualenv       # NEXT_HOME or python virtual environment
     prompt_char             # prompt symbol
   )
 
@@ -48,13 +51,10 @@
     # =========================[ Line #1 ]=========================
     status                  # exit code of the last command
     command_execution_time  # duration of the last command
-    binfmt
-    coredumps
     background_jobs         # presence of background jobs
     direnv                  # direnv status (https://direnv.net/)
     asdf                    # asdf version manager (https://github.com/asdf-vm/asdf)
-    # virtualenv              # python virtual environment (https://docs.python.org/3/library/venv.html)
-    nexthome_virtualenv       # NEXT_HOME or python virtual environment
+    virtualenv              # python virtual environment (https://docs.python.org/3/library/venv.html)
     anaconda                # conda environment (https://conda.io/)
     pyenv                   # python environment (https://github.com/pyenv/pyenv)
     goenv                   # go environment (https://github.com/syndbg/goenv)
@@ -156,9 +156,9 @@
   # typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_SUFFIX='%244F─╯'
 
   # The left end of left prompt.
-  typeset -g POWERLEVEL9K_LEFT_PROMPT_FIRST_SEGMENT_START_SYMBOL=' '
+  typeset -g POWERLEVEL9K_LEFT_PROMPT_FIRST_SEGMENT_START_SYMBOL=''
   # The right end of right prompt.
-  typeset -g POWERLEVEL9K_RIGHT_PROMPT_LAST_SEGMENT_END_SYMBOL=' '
+  typeset -g POWERLEVEL9K_RIGHT_PROMPT_LAST_SEGMENT_END_SYMBOL=''
 
   # Ruler, a.k.a. the horizontal line before each prompt. If you set it to true, you'll
   # probably want to set POWERLEVEL9K_PROMPT_ADD_NEWLINE=false above and
@@ -1701,8 +1701,6 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
         env="system"
       fi
       p10k segment -t "%F{$grey}[env: ${env}]%f"
-    else
-      prompt_virtualenv
     fi
     return
   }
