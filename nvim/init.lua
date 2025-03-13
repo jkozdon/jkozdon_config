@@ -57,6 +57,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Get Neovim version
+local v = vim.version()
+
+-- Function to check version compatibility
+local function has_min_version(major, minor, patch)
+  return v.major > major or (v.major == major and (v.minor > minor or (v.minor == minor and v.patch >= patch)))
+end
+
 -- NOTE: Here is where you install your plugins.
 --  You can configure plugins using the `config` key.
 --
@@ -105,7 +113,7 @@ require('lazy').setup({
     },
   },
 
-    {
+  {
     "mbbill/undotree",
     cmd = "UndotreeToggle", -- Lazy load when the command is run
     keys = { "<leader>u" }, -- Optional: Map a key to toggle Undotree
@@ -113,7 +121,7 @@ require('lazy').setup({
 
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',          opts = {} },
+  { 'folke/which-key.nvim',                opts = {} },
   {
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -183,8 +191,7 @@ require('lazy').setup({
       -- See Configuration section for rest
       mappings = {
         reset = {
-          normal ='<C-m>',
-          insert = '<C-m>'
+          normal = '<C-m>'
         },
       },
       window = {
@@ -218,13 +225,13 @@ require('lazy').setup({
   --     -- show_trailing_blankline_indent = false,
   --   },
   -- },
-  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl",  opts = {} },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',         opts = {} },
+  { 'numToStr/Comment.nvim',               opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
-  { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
+  { 'nvim-telescope/telescope.nvim',       version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
   -- Only load if `make` is available. Make sure you have the system
@@ -240,6 +247,87 @@ require('lazy').setup({
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
   },
+  {
+    "stevearc/dressing.nvim",
+  },
+
+   -- {
+   --   "olimorris/codecompanion.nvim",
+   --   config = true,
+   --   dependencies = {
+   --     "nvim-lua/plenary.nvim",
+   --     "nvim-treesitter/nvim-treesitter",
+   --     opts = {
+   --       strategies = {
+   --         chat = {
+   --           adapter = "copilot",
+   --         },
+   --         inline = {
+   --           adapter = "copilot",
+   --         },
+   --       },
+   --     },
+
+   --   },
+   -- },
+
+  has_min_version(0, 10, 0) and {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = false, -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
+    opts = {
+      -- add any opts here
+      -- for example
+      provider = "copilot",
+      copilot = {
+        endpoint = "https://api.githubcopilot.com",
+        model = "gpt-4o-2024-08-06",
+        proxy = nil,            -- [protocol://]host[:port] Use this proxy
+        allow_insecure = false, -- Allow insecure server connections
+        timeout = 30000,        -- Timeout in milliseconds
+        temperature = 0,
+        max_tokens = 4096,
+      },
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = "make",
+    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "echasnovski/mini.pick",       -- for file_selector provider mini.pick
+      "ibhagwan/fzf-lua",            -- for file_selector provider fzf
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "zbirenbaum/copilot.lua",      -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
+  } or nil,
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -358,7 +446,7 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 -- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-   vim.o.wrap = false
+vim.o.wrap = false
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -637,7 +725,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-    { name = 'buffer',   keyword_length = 10 },
+    { name = 'buffer',  keyword_length = 10 },
     { name = 'path' },
   },
 }
