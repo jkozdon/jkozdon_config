@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+# based on https://morgan.cugerone.com/blog/workarounds-to-git-worktree-using-bare-repository-and-cannot-fetch-remote-branches/
+
 # Examples of call:
 # git-clone-bare-for-worktrees git@github.com:name/repo.git
 # => Clones to a /repo directory
