@@ -190,3 +190,5 @@ path=('/Users/jkozdon/.juliaup/bin' $path)
 export PATH
 
 # <<< juliaup initialize <<<
+
+export PATH="$PATH:/Users/jkozdon/.modular/bin"

@@ -201,6 +201,12 @@ require('lazy').setup({
         reset = {
           normal = '<C-m>'
         },
+        submit_prompt = {
+          insert = '<CR>',
+        },
+      },
+      window = {
+        layout = 'horizontal', -- 'vertical', 'horizontal', 'float', 'replace'
       },
       window = {
         layout = "horizontal",
