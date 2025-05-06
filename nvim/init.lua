@@ -170,6 +170,15 @@ require('lazy').setup({
     vim.cmd('nmap <leader>s <Plug>SlimeSendCell'),
   },
 
+  -- {
+  --   'zbirenbaum/copilot.lua',
+  --   config = function()
+  --     require("copilot").setup({
+  --       suggestion = { enabled = true },
+  --       panel = { enabled = true },
+  --     })
+  --   end,
+  -- },
   {
     'github/copilot.vim',
     -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
@@ -181,7 +190,6 @@ require('lazy').setup({
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "canary",
     dependencies = {
       { "github/copilot.vim" },
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
@@ -251,25 +259,25 @@ require('lazy').setup({
     "stevearc/dressing.nvim",
   },
 
-   -- {
-   --   "olimorris/codecompanion.nvim",
-   --   config = true,
-   --   dependencies = {
-   --     "nvim-lua/plenary.nvim",
-   --     "nvim-treesitter/nvim-treesitter",
-   --     opts = {
-   --       strategies = {
-   --         chat = {
-   --           adapter = "copilot",
-   --         },
-   --         inline = {
-   --           adapter = "copilot",
-   --         },
-   --       },
-   --     },
+  -- {
+  --   "olimorris/codecompanion.nvim",
+  --   config = true,
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --     opts = {
+  --       strategies = {
+  --         chat = {
+  --           adapter = "copilot",
+  --         },
+  --         inline = {
+  --           adapter = "copilot",
+  --         },
+  --       },
+  --     },
 
-   --   },
-   -- },
+  --   },
+  -- },
 
   has_min_version(0, 10, 0) and {
     "yetone/avante.nvim",
@@ -282,12 +290,17 @@ require('lazy').setup({
       provider = "copilot",
       copilot = {
         endpoint = "https://api.githubcopilot.com",
-        model = "gpt-4o-2024-08-06",
+        model = "claude-3.7-sonnet",
+        -- model = "gpt-4o-2024-08-06",
         proxy = nil,            -- [protocol://]host[:port] Use this proxy
         allow_insecure = false, -- Allow insecure server connections
         timeout = 30000,        -- Timeout in milliseconds
         temperature = 0,
         max_tokens = 4096,
+      },
+      web_search_engine = {
+        provider = "google", -- tavily, serpapi, searchapi, google, kagi, brave, or searxng
+        proxy = nil, -- proxy support, e.g., http://127.0.0.1:7890
       },
     },
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
