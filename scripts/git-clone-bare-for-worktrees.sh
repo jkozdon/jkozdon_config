@@ -61,3 +61,7 @@ fi
 
 # Create a worktree for the specified or default branch
 git worktree add "$branch" "origin/$branch"
+pushd "$branch"
+git checkout "$branch"
+git branch --set-upstream-to=origin/"$branch" "$branch"
+popd
