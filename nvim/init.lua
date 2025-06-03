@@ -268,27 +268,7 @@ require('lazy').setup({
 
   has_min_version(0, 10, 0) and {
     "olimorris/codecompanion.nvim",
-    config = true,
-    opts = {
-      display = {
-        action_palette = {
-          opts = {
-            show_default_actions = true,
-          },
-        },
-      },
-      adapters = {
-        copilot = function()
-          return require("codecompanion.adapters").extend("copilot", {
-            schema = {
-              model = {
-                default = "claude-sonnet-4",
-              },
-            },
-          })
-        end,
-      },
-    },
+    opts = {},
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -628,6 +608,17 @@ require('nvim-treesitter.configs').setup {
 }
 
 require("codecompanion").setup({
+  adapters = {
+    copilot = function()
+      return require("codecompanion.adapters").extend("copilot", {
+        schema = {
+          model = {
+            default = "claude-sonnet-4",
+          },
+        },
+      })
+    end,
+  },
 })
 
 -- Diagnostic keymaps
