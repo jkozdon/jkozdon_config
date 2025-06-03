@@ -266,88 +266,126 @@ require('lazy').setup({
     "stevearc/dressing.nvim",
   },
 
-  -- {
-  --   "olimorris/codecompanion.nvim",
-  --   config = true,
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --     opts = {
-  --       strategies = {
-  --         chat = {
-  --           adapter = "copilot",
-  --         },
-  --         inline = {
-  --           adapter = "copilot",
-  --         },
-  --       },
-  --     },
-
-  --   },
-  -- },
-
   has_min_version(0, 10, 0) and {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    lazy = false,
-    version = false, -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
+    "olimorris/codecompanion.nvim",
+    config = true,
     opts = {
-      -- add any opts here
-      -- for example
-      provider = "copilot",
-      copilot = {
-        endpoint = "https://api.githubcopilot.com",
-        model = "claude-3.7-sonnet",
-        -- model = "gpt-4o-2024-08-06",
-        proxy = nil,            -- [protocol://]host[:port] Use this proxy
-        allow_insecure = false, -- Allow insecure server connections
-        timeout = 30000,        -- Timeout in milliseconds
-        temperature = 0,
-        max_tokens = 4096,
-      },
-      web_search_engine = {
-        provider = "google", -- tavily, serpapi, searchapi, google, kagi, brave, or searxng
-        proxy = nil, -- proxy support, e.g., http://127.0.0.1:7890
-      },
-    },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = "make",
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "echasnovski/mini.pick",       -- for file_selector provider mini.pick
-      "ibhagwan/fzf-lua",            -- for file_selector provider fzf
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-      "zbirenbaum/copilot.lua",      -- for providers='copilot'
-      {
-        -- support for image pasting
-        "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
+      display = {
+        action_palette = {
+          opts = {
+            show_default_actions = true,
           },
         },
       },
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { "markdown", "Avante" },
-        },
-        ft = { "markdown", "Avante" },
+      adapters = {
+        copilot = function()
+          return require("codecompanion.adapters").extend("copilot", {
+            schema = {
+              model = {
+                default = "claude-sonnet-4",
+              },
+            },
+          })
+        end,
       },
     },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    {
+      "MeanderingProgrammer/render-markdown.nvim",
+      ft = { "markdown", "codecompanion" }
+    },
+    {
+      "OXY2DEV/markview.nvim",
+      lazy = false,
+      opts = {
+        preview = {
+          filetypes = { "markdown", "codecompanion" },
+          ignore_buftypes = {},
+        },
+      },
+    },
+    {
+      "echasnovski/mini.diff",
+      config = function()
+        local diff = require("mini.diff")
+        diff.setup({
+          -- Disabled by default
+          source = diff.gen_source.none(),
+        })
+      end,
+    },
+    sources = {
+      per_filetype = {
+        codecompanion = { "codecompanion" },
+      }
+    },
   } or nil,
+
+  -- has_min_version(0, 10, 0) and {
+  --   "yetone/avante.nvim",
+  --   event = "VeryLazy",
+  --   lazy = false,
+  --   version = false, -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
+  --   opts = {
+  --     -- add any opts here
+  --     -- for example
+  --     provider = "copilot",
+  --     copilot = {
+  --       endpoint = "https://api.githubcopilot.com",
+  --       model = "claude-3.7-sonnet",
+  --       -- model = "gpt-4o-2024-08-06",
+  --       proxy = nil,            -- [protocol://]host[:port] Use this proxy
+  --       allow_insecure = false, -- Allow insecure server connections
+  --       timeout = 30000,        -- Timeout in milliseconds
+  --       temperature = 0,
+  --       max_tokens = 4096,
+  --     },
+  --     web_search_engine = {
+  --       provider = "google", -- tavily, serpapi, searchapi, google, kagi, brave, or searxng
+  --       proxy = nil, -- proxy support, e.g., http://127.0.0.1:7890
+  --     },
+  --   },
+  --   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  --   build = "make",
+  --   -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "MunifTanjim/nui.nvim",
+  --     --- The below dependencies are optional,
+  --     "echasnovski/mini.pick",       -- for file_selector provider mini.pick
+  --     "ibhagwan/fzf-lua",            -- for file_selector provider fzf
+  --     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+  --     "zbirenbaum/copilot.lua",      -- for providers='copilot'
+  --     {
+  --       -- support for image pasting
+  --       "HakonHarnes/img-clip.nvim",
+  --       event = "VeryLazy",
+  --       opts = {
+  --         -- recommended settings
+  --         default = {
+  --           embed_image_as_base64 = false,
+  --           prompt_for_file_name = false,
+  --           drag_and_drop = {
+  --             insert_mode = true,
+  --           },
+  --           -- required for Windows users
+  --           use_absolute_path = true,
+  --         },
+  --       },
+  --     },
+  --     {
+  --       -- Make sure to set this up properly if you have lazy=true
+  --       'MeanderingProgrammer/render-markdown.nvim',
+  --       opts = {
+  --         file_types = { "markdown", "Avante" },
+  --       },
+  --       ft = { "markdown", "Avante" },
+  --     },
+  --   },
+  -- } or nil,
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -589,6 +627,9 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
+require("codecompanion").setup({
+})
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
@@ -686,16 +727,6 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
 }
 
 -- nvim-cmp setup
