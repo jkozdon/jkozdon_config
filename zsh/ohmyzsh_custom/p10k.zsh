@@ -1660,7 +1660,7 @@ typeset -g POWERLEVEL9K_CONFIG_FILE=${${(%):-%x}:a}
   }
 
   function prompt_binfmt() {
-    local BINFMT_FILE="/etc/binfmt.d/nextloader.conf"
+    local BINFMT_FILE="/proc/sys/fs/binfmt_misc/nextloader"
     local magenta='5'
     local code=''
     if [[ -e "$BINFMT_FILE" ]]; then
