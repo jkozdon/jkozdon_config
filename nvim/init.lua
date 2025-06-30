@@ -902,6 +902,14 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'jpalardy/vim-slime',
+    vim.api.nvim_set_var('slime_target', 'tmux'),
+    vim.cmd('let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": "{last}"}'),
+    vim.cmd('let g:slime_cell_delimiter = "```"'),
+    vim.cmd('nmap <leader>s <Plug>SlimeSendCell'),
+  },
+
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
