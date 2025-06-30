@@ -234,6 +234,11 @@ end
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
+local v = vim.version()
+local function has_min_version(major, minor, patch)
+  return v.major > major or (v.major == major and (v.minor > minor or (v.minor == minor and v.patch >= patch)))
+end
+
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -1003,6 +1008,61 @@ require('lazy').setup({
     vim.cmd('nmap <leader>s <Plug>SlimeSendCell'),
   },
 
+  -- {
+  --   "zbirenbaum/copilot.lua",
+  --   cmd = "Copilot",
+  --   event = "InsertEnter",
+  --   config = function()
+  --     require("copilot").setup({})
+  --   end,
+  -- },
+  {
+    'github/copilot.vim',
+    -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
+    -- vim.cmd('let g:copilot_no_tab_map = v:true')
+    config = function()
+      vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("")')
+      vim.cmd('let g:copilot_no_tab_map = v:true')
+    end,
+  },
+  has_min_version(0, 10, 0) and {
+    "olimorris/codecompanion.nvim",
+    opts = {},
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    {
+      "MeanderingProgrammer/render-markdown.nvim",
+      ft = { "markdown", "codecompanion" }
+    },
+    -- {
+    --   "OXY2DEV/markview.nvim",
+    --   lazy = false,
+    --   opts = {
+    --     preview = {
+    --       filetypes = { "markdown", "codecompanion" },
+    --       ignore_buftypes = {},
+    --     },
+    --   },
+    -- },
+    {
+      "echasnovski/mini.diff",
+      config = function()
+        local diff = require("mini.diff")
+        diff.setup({
+          -- Disabled by default
+          source = diff.gen_source.none(),
+        })
+      end,
+    },
+    sources = {
+      per_filetype = {
+        codecompanion = { "codecompanion" },
+      }
+    },
+  } or nil,
+
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1027,3 +1087,16 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+require("codecompanion").setup({
+  adapters = {
+    copilot = function()
+      return require("codecompanion.adapters").extend("copilot", {
+        schema = {
+          model = {
+            default = "claude-sonnet-4",
+          },
+        },
+      })
+    end,
+  },
+})
