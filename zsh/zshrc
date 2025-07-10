@@ -192,3 +192,70 @@ export PATH
 # <<< juliaup initialize <<<
 
 export PATH="$PATH:/Users/jkozdon/.modular/bin"
+
+function timer() {
+  local input_time=$1
+  local total_seconds
+  local minutes
+  local seconds
+  local bar_length=30 # Length of the progress bar in characters
+  local progress_char="#" # Character to use for the progress bar
+  local empty_char="-"  # Character for the empty part of the progress bar
+
+  # Check if the input contains a colon (min:sec format)
+  if [[ "$input_time" == *:* ]]; then
+    IFS=':' read -r minutes seconds <<< "$input_time"
+    total_seconds=$((10#$minutes * 60 + 10#$seconds)) # Use 10# for base 10 to prevent leading zero issues
+  else
+    # Otherwise, assume it's just minutes
+    minutes=$input_time
+    total_seconds=$((10#$minutes * 60)) # Use 10# for base 10 to prevent leading zero issues
+  fi
+
+  # Basic validation for positive time
+  if (( total_seconds <= 0 )); then
+    echo "Please provide a positive duration."
+    return 1
+  fi
+
+  local current_seconds=0
+  local elapsed_seconds=0
+  local progress_percent=0
+  local filled_chars=0
+  local empty_chars=0
+  local progress_bar_string=""
+
+  # Loop for the countdown
+  for ((current_seconds = total_seconds; current_seconds >= 0; current_seconds--)); do
+    minutes=$((current_seconds / 60))
+    seconds=$((current_seconds % 60))
+
+    elapsed_seconds=$((total_seconds - current_seconds))
+
+    # Calculate progress
+    if (( total_seconds > 0 )); then # Avoid division by zero
+      progress_percent=$((elapsed_seconds * 100 / total_seconds))
+      filled_chars=$((elapsed_seconds * bar_length / total_seconds))
+    else # For total_seconds = 0 (e.g., if input was 0:00 and somehow passed validation)
+      progress_percent=100
+      filled_chars=$bar_length
+    fi
+    empty_chars=$((bar_length - filled_chars))
+
+    # Construct the progress bar string
+    progress_bar_string=""
+    for ((j=0; j<filled_chars; j++)); do
+      progress_bar_string+="$progress_char"
+    done
+    for ((j=0; j<empty_chars; j++)); do
+      progress_bar_string+="$empty_char"
+    done
+
+    # Print the time, progress bar, and percentage
+    printf "%02d:%02d / %02d:%02d [%s] %3d%%\033[0K\r" "$minutes" "$seconds" "$((total_seconds / 60))" "$((total_seconds % 60))" "$progress_bar_string" "$progress_percent"
+
+    sleep 1
+  done
+
+  echo $(printf "%02d:%02d / %02d:%02d [%s] %3d%%\033[0K\r" "$minutes" "$seconds" "$((total_seconds / 60))" "$((total_seconds % 60))" "$progress_bar_string" "$progress_percent")
+}
