@@ -862,9 +862,20 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          buffer = {
+            -- Optional: configure buffer completion behavior
+            max_items = 10,
+            get_bufnrs = function()
+              -- Return buffer numbers to search for completions
+              -- This returns all loaded buffers
+              return vim.tbl_filter(function(buf)
+                return vim.api.nvim_buf_is_loaded(buf)
+              end, vim.api.nvim_list_bufs())
+            end,
+          },
         },
       },
 
@@ -1024,7 +1035,12 @@ require('lazy').setup({
     -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
     -- vim.cmd('let g:copilot_no_tab_map = v:true')
     config = function()
-      vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("")')
+      vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
+      vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
+      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+          expr = true,
+          replace_keycodes = false
+        })
       vim.cmd('let g:copilot_no_tab_map = v:true')
     end,
   },
@@ -1103,3 +1119,14 @@ require("codecompanion").setup({
     end,
   },
 })
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client:supports_method('textDocument/completion') then
+      vim.lsp.completion.enable(true, client.id, ev.buf, {autotrigger = true})
+    end
+  end,
+})
+
+vim.diagnostic.config({virtual_lines = { current_line = true }})
