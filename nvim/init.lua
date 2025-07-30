@@ -218,6 +218,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Add MLIR filetype detection
+vim.api.nvim_create_autocmd({'BufRead', 'BufNewFile'}, {
+  pattern = '*.mlir',
+  callback = function()
+    vim.bo.filetype = 'mlir'
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -500,6 +508,20 @@ require('lazy').setup({
       'saghen/blink.cmp',
     },
     config = function()
+      -- Configure custom MLIR LSP server
+      local configs = require('lspconfig.configs')
+      local lsputil = require('lspconfig.util')
+
+      if not configs.mlir then
+        configs.mlir = {
+          default_config = {
+            cmd = { 'ns-mlir-lsp-server' },
+            filetypes = { 'mlir' },
+            root_dir = lsputil.find_git_ancestor,
+            single_file_support = true,
+          },
+        }
+      end
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -705,6 +727,15 @@ require('lazy').setup({
             },
           },
         },
+        -- Add MLIR LSP configuration here
+        mlir = {
+          cmd = { 'ns-mlir-lsp-server' }, -- Replace with actual path to your MLIR LSP binary
+          filetypes = { 'mlir' },
+          root_dir = require('lspconfig.util').find_git_ancestor,
+          single_file_support = true,
+        },
+        -- Add MLIR back to servers table for the handlers
+        mlir = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -721,6 +752,9 @@ require('lazy').setup({
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
+      ensure_installed = vim.tbl_filter(function(server)
+        return server ~= 'mlir'
+      end, ensure_installed)
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
@@ -731,6 +765,10 @@ require('lazy').setup({
         automatic_installation = false,
         handlers = {
           function(server_name)
+            -- Skip MLIR since it's not available through Mason
+            if server_name == 'mlir' then
+              return
+            end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -740,6 +778,12 @@ require('lazy').setup({
           end,
         },
       }
+      -- Manually setup MLIR LSP since it's not available through Mason
+      if servers.mlir then
+        local mlir_config = servers.mlir
+        mlir_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, mlir_config.capabilities or {})
+        require('lspconfig').mlir.setup(mlir_config)
+      end
     end,
   },
 
@@ -974,7 +1018,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'cpp', 'fortran', 'cmake', 'make', 'rust', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'cpp', 'fortran', 'cmake', 'make', 'rust', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'mlir' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -984,7 +1028,7 @@ require('lazy').setup({
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      indent = { enable = true, disable = { 'ruby', 'mlir' } },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
