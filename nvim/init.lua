@@ -925,20 +925,9 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
-          buffer = {
-            -- Optional: configure buffer completion behavior
-            max_items = 10,
-            get_bufnrs = function()
-              -- Return buffer numbers to search for completions
-              -- This returns all loaded buffers
-              return vim.tbl_filter(function(buf)
-                return vim.api.nvim_buf_is_loaded(buf)
-              end, vim.api.nvim_list_bufs())
-            end,
-          },
         },
       },
 
