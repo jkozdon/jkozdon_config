@@ -173,15 +173,14 @@ vim.o.confirm = true
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
+-- Diagnostic keymap
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
 --
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
+-- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
@@ -843,7 +842,10 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'enter',
+        cmdline = {
+          preset = 'default'
+        },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -858,7 +860,24 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = {
+          auto_show = false,
+          auto_show_delay_ms = 500,
+          window = {
+            -- Make documentation window non-focusable to prevent cursor jumping
+            focusable = false,
+          }
+        },
+        menu = {
+          -- Ensure completion menu shows automatically
+          auto_show = true,
+        },
+        accept = {
+          -- Auto-bracket completion
+          auto_brackets = {
+            enabled = true,
+          }
+        }
       },
 
       sources = {
@@ -891,7 +910,13 @@ require('lazy').setup({
       fuzzy = { implementation = 'lua' },
 
       -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      signature = {
+        enabled = true,
+        window = {
+          -- Make signature help window non-focusable to prevent cursor jumping
+          focusable = false,
+        }
+      },
     },
   },
 
@@ -1021,7 +1046,6 @@ require('lazy').setup({
     vim.cmd('let g:slime_cell_delimiter = "```"'),
     vim.cmd('nmap <leader>s <Plug>SlimeSendCell'),
   },
-
   -- {
   --   "zbirenbaum/copilot.lua",
   --   cmd = "Copilot",
@@ -1030,58 +1054,57 @@ require('lazy').setup({
   --     require("copilot").setup({})
   --   end,
   -- },
-  {
-    'github/copilot.vim',
-    -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
-    -- vim.cmd('let g:copilot_no_tab_map = v:true')
-    config = function()
-      vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
-      vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
-      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-          expr = true,
-          replace_keycodes = false
-        })
-      vim.cmd('let g:copilot_no_tab_map = v:true')
-    end,
-  },
-  has_min_version(0, 10, 0) and {
-    "olimorris/codecompanion.nvim",
-    opts = {},
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    {
-      "MeanderingProgrammer/render-markdown.nvim",
-      ft = { "markdown", "codecompanion" }
-    },
-    -- {
-    --   "OXY2DEV/markview.nvim",
-    --   lazy = false,
-    --   opts = {
-    --     preview = {
-    --       filetypes = { "markdown", "codecompanion" },
-    --       ignore_buftypes = {},
-    --     },
-    --   },
-    -- },
-    {
-      "echasnovski/mini.diff",
-      config = function()
-        local diff = require("mini.diff")
-        diff.setup({
-          -- Disabled by default
-          source = diff.gen_source.none(),
-        })
-      end,
-    },
-    sources = {
-      per_filetype = {
-        codecompanion = { "codecompanion" },
-      }
-    },
-  } or nil,
-
+  -- {
+  --   'github/copilot.vim',
+  --   -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
+  --   -- vim.cmd('let g:copilot_no_tab_map = v:true')
+  --   config = function()
+  --     vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
+  --     vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
+  --     vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  --         expr = true,
+  --         replace_keycodes = false
+  --       })
+  --     vim.cmd('let g:copilot_no_tab_map = v:true')
+  --   end,
+  -- },
+  -- has_min_version(0, 10, 0) and {
+  --   "olimorris/codecompanion.nvim",
+  --   opts = {},
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  --   {
+  --     "MeanderingProgrammer/render-markdown.nvim",
+  --     ft = { "markdown", "codecompanion" }
+  --   },
+  --   -- {
+  --   --   "OXY2DEV/markview.nvim",
+  --   --   lazy = false,
+  --   --   opts = {
+  --   --     preview = {
+  --   --       filetypes = { "markdown", "codecompanion" },
+  --   --       ignore_buftypes = {},
+  --   --     },
+  --   --   },
+  --   -- },
+  --  {
+  --    "echasnovski/mini.diff",
+  --    config = function()
+  --      local diff = require("mini.diff")
+  --      diff.setup({
+  --        -- Disabled by default
+  --        source = diff.gen_source.none(),
+  --      })
+  --    end,
+  --  },
+  --  sources = {
+  --    per_filetype = {
+  --      codecompanion = { "codecompanion" },
+  --    }
+  --  },
+  -- } or nil,
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1106,19 +1129,19 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-require("codecompanion").setup({
-  adapters = {
-    copilot = function()
-      return require("codecompanion.adapters").extend("copilot", {
-        schema = {
-          model = {
-            default = "claude-sonnet-4",
-          },
-        },
-      })
-    end,
-  },
-})
+-- require("codecompanion").setup({
+--   adapters = {
+--     copilot = function()
+--       return require("codecompanion.adapters").extend("copilot", {
+--         schema = {
+--           model = {
+--             default = "claude-sonnet-4",
+--           },
+--         },
+--       })
+--     end,
+--   },
+-- })
 
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
