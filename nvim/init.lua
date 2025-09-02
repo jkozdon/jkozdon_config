@@ -114,9 +114,9 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
-end)
+-- vim.schedule(function()
+--   vim.o.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -125,8 +125,8 @@ vim.o.breakindent = true
 vim.o.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.o.ignorecase = true
-vim.o.smartcase = true
+vim.o.ignorecase = false
+vim.o.smartcase = false
 
 -- Keep signcolumn on by default
 vim.o.signcolumn = 'yes'
@@ -261,7 +261,32 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   {
     'NMAC427/guess-indent.nvim',
-    config = true  -- Calls require('plugin-name').setup({})
+    config = function()
+      require('guess-indent').setup({
+        auto_cmd = true,                    -- Set to false to disable automatic execution
+        override_editorconfig = false,      -- Set to true to override .editorconfig
+        filetype_exclude = {               -- A list of filetypes for which the auto command gets disabled
+          "netrw",
+          "tutor",
+        },
+        buftype_exclude = {                -- A list of buffer types for which the auto command gets disabled
+          "help",
+          "nofile",
+          "terminal",
+          "prompt",
+        },
+        -- Force spaces as the default when detection is ambiguous
+        use_tab_fallback = false,          -- Use tabs when detection fails (default: true)
+        default_tab_width = 2,             -- Default tab width when using tabs
+        default_space_width = 2,           -- Default space width when using spaces
+      })
+
+      -- Set global defaults to prefer spaces
+      vim.o.expandtab = true
+      vim.o.tabstop = 4
+      vim.o.shiftwidth = 4
+      vim.o.softtabstop = 4
+    end
   },
 
   -- NOTE: Plugins can also be added by using a table,
@@ -922,12 +947,56 @@ require('lazy').setup({
             enabled = true,
           }
         }
+        --  -- Enable automatic triggering and showing
+        --  trigger = {
+        --    -- Show completion menu automatically as you type
+        --    show_on_insert_on_trigger_character = true,
+        --    show_on_trigger_character = true,
+        --    show_on_keyword = true,
+        --    -- Reduce the number of characters needed to trigger
+        --    -- keyword_length = 1,
+        --  },
+        --  -- Automatically show documentation
+        --  documentation = {
+        --    auto_show = true,
+        --    auto_show_delay_ms = 200
+        --  },
+
+        --  -- Show completion menu automatically
+        --  menu = {
+        --    auto_show = true,
+        --    draw = {
+        --      -- Show completion items in a fuzzy manner
+        --      treesitter = { "lsp" },
+        --    },
+        --  },
+
+        --  -- Accept completion automatically for single matches
+        --  accept = {
+        --    auto_brackets = {
+        --      enabled = true,
+        --    },
+        --  },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          buffer = {
+            name = 'Buffer',
+            module = 'blink.cmp.sources.buffer',
+            opts = {
+              -- Get words from all visible buffers
+              get_bufnrs = function()
+                return vim.api.nvim_list_bufs()
+              end,
+              -- Minimum word length to consider for completion
+              min_keyword_length = 2,
+              -- Maximum number of items to show from buffer
+              max_items = 5,
+            },
+          },
         },
       },
 
@@ -1176,13 +1245,14 @@ require('lazy').setup({
 --   },
 -- })
 
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client:supports_method('textDocument/completion') then
-      vim.lsp.completion.enable(true, client.id, ev.buf, {autotrigger = true})
-    end
-  end,
-})
+-- This was autocompleting and I didn't like it.
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   callback = function(ev)
+--     local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--     if client:supports_method('textDocument/completion') then
+--       vim.lsp.completion.enable(true, client.id, ev.buf, {autotrigger = true})
+--     end
+--   end,
+-- })
 
 vim.diagnostic.config({virtual_lines = { current_line = true }})
