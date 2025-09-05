@@ -1259,3 +1259,12 @@ require('lazy').setup({
 -- })
 
 vim.diagnostic.config({virtual_lines = { current_line = true }})
+
+-- simple git-wip setup
+local gitwipsave = function()
+	vim.api.nvim_command('silent !cd "`dirname "%"`" && git wip save "WIP from vim" --editor -- "`basename "%"`"')
+end
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+	pattern = { "*" },
+	callback = gitwipsave,
+})
