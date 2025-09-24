@@ -260,3 +260,9 @@ function timer() {
   echo $(printf "%02d:%02d / %02d:%02d [%s] %3d%%\033[0K\r" "$minutes" "$seconds" "$((total_seconds / 60))" "$((total_seconds % 60))" "$progress_bar_string" "$progress_percent")
 }
 export PATH="$HOME/.local/bin:$PATH"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/jkozdon/.lmstudio/bin"
+# End of LM Studio CLI section
+
+export PATH="/Users/jkozdon/.pixi/bin:$PATH"
