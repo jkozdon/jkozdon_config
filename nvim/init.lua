@@ -937,7 +937,7 @@ require('lazy').setup({
           auto_show_delay_ms = 500,
           window = {
             -- Make documentation window non-focusable to prevent cursor jumping
-            focusable = false,
+            -- focusable = false,
           }
         },
         menu = {
@@ -1019,7 +1019,7 @@ require('lazy').setup({
         enabled = true,
         window = {
           -- Make signature help window non-focusable to prevent cursor jumping
-          focusable = false,
+          -- focusable = false,
         }
       },
     },
