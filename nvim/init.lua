@@ -911,7 +911,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'enter',
+        -- preset = 'enter',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -995,9 +995,9 @@ require('lazy').setup({
                 return vim.api.nvim_list_bufs()
               end,
               -- Minimum word length to consider for completion
-              min_keyword_length = 2,
+              -- min_keyword_length = 2,
               -- Maximum number of items to show from buffer
-              max_items = 5,
+              -- max_items = 5,
             },
           },
         },
