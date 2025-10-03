@@ -93,22 +93,42 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
+-- Check if running in VSCode/Cursor
+local is_vscode = vim.g.vscode ~= nil
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
--- Make line numbers default
-vim.o.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+-- Only set basic options that are useful in both Neovim and VSCode/Cursor
+if not is_vscode then
+  -- Make line numbers default
+  vim.o.number = true
+  -- You can also add relative line numbers, to help with jumping.
+  --  Experiment for yourself to see if you like it!
+  -- vim.o.relativenumber = true
 
+  -- Don't show the mode, since it's already in the status line
+  vim.o.showmode = false
+
+  -- Keep signcolumn on by default
+  vim.o.signcolumn = 'yes'
+
+  -- Sets how neovim will display certain whitespace characters in the editor.
+  vim.o.list = true
+  vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+
+  -- Show which line your cursor is on
+  vim.o.cursorline = true
+
+  -- Preview substitutions live, as you type!
+  vim.o.inccommand = 'split'
+end
+
+-- Options that are useful in both environments
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
-
--- Don't show the mode, since it's already in the status line
-vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -128,9 +148,6 @@ vim.o.undofile = true
 vim.o.ignorecase = false
 vim.o.smartcase = false
 
--- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
-
 -- Decrease update time
 vim.o.updatetime = 250
 
@@ -140,23 +157,6 @@ vim.o.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
-
--- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
---
---  Notice listchars is set using `vim.opt` instead of `vim.o`.
---  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
---   See `:help lua-options`
---   and `:help lua-options-guide`
-vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-
--- Preview substitutions live, as you type!
-vim.o.inccommand = 'split'
-
--- Show which line your cursor is on
-vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
@@ -169,34 +169,76 @@ vim.o.confirm = true
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+-- VSCode/Cursor specific keymaps
+if is_vscode then
+  -- Use VSCode's built-in functionality instead of vim's
+  -- Clear highlights on search when pressing <Esc> in normal mode
+  vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+  
+  -- Add == indentation using VSCode's reindent functionality
+  vim.keymap.set('n', '==', '<cmd>call VSCodeNotify("editor.action.reindentselectedlines")<CR>', { desc = 'Indent current line' })
+  -- Support visual mode indentation with =
+  vim.keymap.set('v', '=', '<cmd>call VSCodeNotify("editor.action.reindentselectedlines")<CR>', { desc = 'Indent selected lines' })
+  
+  -- Completion keymaps for VSCode
+  vim.keymap.set('i', '<C-Space>', '<cmd>call VSCodeNotify("editor.action.triggerSuggest")<CR>', { desc = 'Trigger completion' })
+  vim.keymap.set('i', '<C-y>', '<cmd>call VSCodeNotify("acceptSelectedSuggestion")<CR>', { desc = 'Accept completion' })
+  vim.keymap.set('i', '<C-e>', '<cmd>call VSCodeNotify("hideSuggestWidget")<CR>', { desc = 'Cancel completion' })
+  
+  -- Search keymaps for VSCode
+  vim.keymap.set('n', '<leader>sw', function()
+    -- Get the word under cursor and search for it across the workspace
+    local word = vim.fn.expand('<cword>')
+    if word ~= '' then
+      vim.fn.VSCodeNotify('workbench.action.findInFiles', { query = word })
+    end
+  end, { desc = '[S]earch current [W]ord' })
 
--- Diagnostic keymap
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+  -- Text wrapping keymaps for VSCode (gq equivalent)
+  -- Wrap lines in visual mode
+  -- vim.keymap.set('v', 'gq', '<cmd>call VSCodeNotify("rewrap.rewrapComment")<CR>', { desc = 'Wrap selection' })
+  
+  -- Wrap current line (gqgq equivalent)
+  --vim.keymap.set('n', 'gqgq', function()
+    --vim.cmd('normal! V')
+    --vim.fn.VSCodeNotify('rewrap.rewrapComment')
+  --end, { desc = 'Wrap current line' })
+  
+  -- Alternative: Use rewrap extension if available (better for text wrapping)
+  -- Uncomment these and comment the above if you have the Rewrap extension installed
+  -- vim.keymap.set('v', 'gq', '<cmd>call VSCodeNotify("rewrap.rewrapComment")<CR>', { desc = 'Rewrap selection' })
+  -- vim.keymap.set('n', 'gqgq', '<cmd>call VSCodeNotify("rewrap.rewrapCommentAt")<CR>', { desc = 'Rewrap current line' })
+else
+  -- Neovim-specific keymaps
+  -- Clear highlights on search when pressing <Esc> in normal mode
+  --  See `:help hlsearch`
+  vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+  -- Diagnostic keymap
+  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+  -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
+  -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
+  -- is not what someone will guess without a bit more experience.
+  --
+  -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping -- or just use <C-\><C-n> to exit terminal mode
+  vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+  -- Keybinds to make split navigation easier.
+  --  Use CTRL+<hjkl> to switch between windows
+  --
+  --  See `:help wincmd` for a list of all window commands
+  vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+  vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+  vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+  vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+end
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -207,24 +249,33 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.hl.on_yank()`
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function()
-    vim.hl.on_yank()
-  end,
-})
+-- Only set up autocommands that work well in both environments
+if not is_vscode then
+  -- Highlight when yanking (copying) text
+  --  Try it with `yap` in normal mode
+  --  See `:help vim.hl.on_yank()`
+  vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking (copying) text',
+    group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+    callback = function()
+      vim.hl.on_yank()
+    end,
+  })
+end
 
--- Add MLIR filetype detection
+-- Add MLIR filetype detection (useful in both environments)
 vim.api.nvim_create_autocmd({'BufRead', 'BufNewFile'}, {
   pattern = '*.mlir',
   callback = function()
     vim.bo.filetype = 'mlir'
   end,
 })
+
+-- Skip plugin loading entirely if in VSCode/Cursor
+if is_vscode then
+  -- Minimal setup for VSCode/Cursor - only essential configurations
+  return
+end
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -713,7 +764,7 @@ require('lazy').setup({
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-      local capabilities = require('blink.cmp').get_lsp_capabilities()
+      local capabilities = vim.g.vscode and vim.lsp.protocol.make_client_capabilities() or require('blink.cmp').get_lsp_capabilities()
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -855,6 +906,7 @@ require('lazy').setup({
 
   { -- Autocompletion
     'saghen/blink.cmp',
+    enabled = not vim.g.vscode,
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
