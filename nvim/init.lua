@@ -1211,20 +1211,20 @@ require('lazy').setup({
   --     require("copilot").setup({})
   --   end,
   -- },
-  -- {
-  --   'github/copilot.vim',
-  --   -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
-  --   -- vim.cmd('let g:copilot_no_tab_map = v:true')
-  --   config = function()
-  --     vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
-  --     vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
-  --     vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-  --         expr = true,
-  --         replace_keycodes = false
-  --       })
-  --     vim.cmd('let g:copilot_no_tab_map = v:true')
-  --   end,
-  -- },
+  {
+    'github/copilot.vim',
+    -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
+    -- vim.cmd('let g:copilot_no_tab_map = v:true')
+    config = function()
+      vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
+      vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
+      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+          expr = true,
+          replace_keycodes = false
+        })
+      vim.cmd('let g:copilot_no_tab_map = v:true')
+    end,
+  },
   -- has_min_version(0, 10, 0) and {
   --   "olimorris/codecompanion.nvim",
   --   opts = {},
