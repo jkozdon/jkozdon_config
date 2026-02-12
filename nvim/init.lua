@@ -1320,3 +1320,42 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 	pattern = { "*" },
 	callback = gitwipsave,
 })
+
+-- Helper: send lines to vim-slime with file context header
+local function slime_send_with_context(start_line, end_line)
+  local bufname = vim.fn.expand('%:~:.')
+  local filetype = vim.bo.filetype or ''
+  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+  local header = string.format(
+    "```%s  (%s, lines %d-%d)",
+    filetype, bufname, start_line, end_line
+  )
+  local footer = "```"
+
+  local payload = header
+    .. "\n"
+    .. table.concat(lines, "\n")
+    .. "\n"
+    .. footer
+    .. "\n"
+
+  vim.fn['slime#send'](payload)
+end
+
+-- Normal mode: current line
+vim.keymap.set('n', '<leader>sc', function()
+  local line = vim.fn.line('.')
+  slime_send_with_context(line, line)
+end, { desc = 'Slime send line with file context' })
+
+-- Visual mode: use a command range so neovim passes the exact selected lines
+vim.keymap.set('v', '<leader>sc', function()
+  -- feedkeys to exit visual, then use a command with range
+  local esc = vim.api.nvim_replace_termcodes('<Esc>', true, false, true)
+  vim.api.nvim_feedkeys(esc, 'x', false)
+  -- After escaping, '<  and '> marks are now reliably set
+  local start_line = vim.fn.line("'<")
+  local end_line   = vim.fn.line("'>")
+  slime_send_with_context(start_line, end_line)
+end, { desc = 'Slime send selection with file context' })
