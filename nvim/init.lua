@@ -1381,7 +1381,7 @@ require('lazy').setup({
 
 vim.diagnostic.config({virtual_lines = { current_line = true }})
 
--- simple git-wip setup
+-- simple git-wip setup: git clone git://github.com/bartman/git-wip.git
 local gitwipsave = function()
 	vim.api.nvim_command('silent !cd "`dirname "%"`" && git wip save "WIP from vim" --editor -- "`basename "%"`"')
 end
