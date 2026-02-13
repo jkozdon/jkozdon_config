@@ -374,6 +374,9 @@ require('lazy').setup({
       },
     },
   },
+  { -- adds diffview tools to help you review git changes in a pretty way
+    'sindrets/diffview.nvim'
+  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
