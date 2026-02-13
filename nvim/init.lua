@@ -261,6 +261,16 @@ if not is_vscode then
       vim.hl.on_yank()
     end,
   })
+
+  -- [[ Hotreload functionality ]]
+  -- Automatically reload files when they change on disk
+  -- See: https://github.com/richardgill/nix/blob/ebdd826/modules/home-manager/dot-files/nvim/lua/custom/hotreload.lua
+  local hotreload = require('custom.hotreload')
+  hotreload.setup()
+
+  -- Start the directory watcher for active background reloading
+  -- for the current directory.
+  require('custom.directory-watcher').setup({ path = vim.fn.getcwd() })
 end
 
 -- Add MLIR filetype detection (useful in both environments)
@@ -375,7 +385,63 @@ require('lazy').setup({
     },
   },
   { -- adds diffview tools to help you review git changes in a pretty way
-    'sindrets/diffview.nvim'
+    -- Source: https://github.com/richardgill/nix/blob/ebdd826/modules/home-manager/dot-files/nvim/lua/plugins/git-diff_diffview.lua
+    'sindrets/diffview.nvim',
+    version = '*',
+    config = function()
+      local is_git_ignored = function(filepath)
+        vim.fn.system('git check-ignore -q ' .. vim.fn.shellescape(filepath))
+        return vim.v.shell_error == 0
+      end
+
+      local update_left_pane = function()
+        pcall(function()
+          local lib = require 'diffview.lib'
+          local view = lib.get_current_view()
+          if view then
+            -- This updates the left panel with all the files, but doesn't update the buffers
+            view:update_files()
+          end
+        end)
+      end
+
+      -- Register handler for file changes in watched directory
+      require('custom.directory-watcher').registerOnChangeHandler('diffview', function(filepath, _)
+        local is_in_dot_git_dir = filepath:match '/%.git/' or filepath:match '^%.git/'
+
+        if is_in_dot_git_dir or not is_git_ignored(filepath) then
+          update_left_pane()
+        end
+      end)
+
+      vim.api.nvim_create_autocmd('FocusGained', {
+        callback = update_left_pane,
+      })
+
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'DiffviewViewLeave',
+        callback = function()
+          vim.cmd 'DiffviewClose'
+        end,
+      })
+
+      require('diffview').setup {
+        default_args = {
+          DiffviewOpen = { '--imply-local' },
+        },
+        keymaps = {
+          view = {
+            { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diffview' } },
+          },
+          file_panel = {
+            { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diffview' } },
+          },
+          file_history_panel = {
+            { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diffview' } },
+          },
+        },
+      }
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
