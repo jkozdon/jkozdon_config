@@ -84,6 +84,13 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+vim.filetype.add({
+  extension = {
+    cu = 'cuda',
+    cuh = 'cuda',
+  },
+})
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -845,6 +852,17 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+          clangd = {
+          filetypes = { 'c', 'cpp', 'cuda', 'proto' },
+          -- Optional: tell clangd to use CUDA-specific flags
+          -- You can also use a compile_commands.json or .clangd file in your project
+          cmd = {
+            'clangd',
+            '--background-index',
+            '--clang-tidy',
+            '--cuda-gpu-arch=native', -- adjust to your GPU architecture
+          },
+        },
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
