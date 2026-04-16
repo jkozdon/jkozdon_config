@@ -1298,20 +1298,20 @@ require('lazy').setup({
   --     require("copilot").setup({})
   --   end,
   -- },
-  {
-    'github/copilot.vim',
-    -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
-    -- vim.cmd('let g:copilot_no_tab_map = v:true')
-    config = function()
-      vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
-      vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
-      vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-          expr = true,
-          replace_keycodes = false
-        })
-      vim.cmd('let g:copilot_no_tab_map = v:true')
-    end,
-  },
+  -- {
+  --   'github/copilot.vim',
+  --   -- vim.cmd('imap <silent><script><expr> <C-L> copilot#Accept("<CR>")'),
+  --   -- vim.cmd('let g:copilot_no_tab_map = v:true')
+  --   config = function()
+  --     vim.keymap.set('i', '<C-L>', '<Plug>(copilot-accept-line)')
+  --     vim.keymap.set('i', '<C-F>', '<Plug>(copilot-accept-word)')
+  --     vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  --         expr = true,
+  --         replace_keycodes = false
+  --       })
+  --     vim.cmd('let g:copilot_no_tab_map = v:true')
+  --   end,
+  -- },
   -- has_min_version(0, 10, 0) and {
   --   "olimorris/codecompanion.nvim",
   --   opts = {},
@@ -1410,7 +1410,7 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 
 -- Helper: send lines to vim-slime with file context header
 local function slime_send_with_context(start_line, end_line)
-  local bufname = vim.fn.expand('%:~:.')
+  local bufname = vim.fn.expand('%:p')
   local filetype = vim.bo.filetype or ''
   local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
 
@@ -1430,10 +1430,27 @@ local function slime_send_with_context(start_line, end_line)
   vim.fn['slime#send'](payload)
 end
 
+local function slime_focus_pane()
+  local cfg = vim.b.slime_config
+    or vim.g.slime_config
+    or vim.fn.eval('get(g:, "slime_default_config", {})')
+  if not cfg then return end
+  local target = cfg.target_pane
+  if not target or target == '' then return end
+  local socket = cfg.socket_name
+  local cmd = 'tmux'
+  if socket and socket ~= '' then
+    cmd = cmd .. ' -S ' .. vim.fn.shellescape(socket)
+  end
+  cmd = cmd .. ' select-pane -t ' .. vim.fn.shellescape(target)
+  vim.fn.system(cmd)
+end
+
 -- Normal mode: current line
 vim.keymap.set('n', '<leader>sc', function()
   local line = vim.fn.line('.')
   slime_send_with_context(line, line)
+  slime_focus_pane()
 end, { desc = 'Slime send line with file context' })
 
 -- Visual mode: use a command range so neovim passes the exact selected lines
@@ -1445,4 +1462,5 @@ vim.keymap.set('v', '<leader>sc', function()
   local start_line = vim.fn.line("'<")
   local end_line   = vim.fn.line("'>")
   slime_send_with_context(start_line, end_line)
+  slime_focus_pane()
 end, { desc = 'Slime send selection with file context' })
