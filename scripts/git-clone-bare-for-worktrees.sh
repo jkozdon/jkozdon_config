@@ -12,6 +12,11 @@ set -e
 #
 # git-clone-bare-for-worktrees -b branch-name git@github.com:name/repo.git
 # => Clones and checks out the specified branch
+#
+# Make this a git command by adding the following to your $HOME/.gitconfig
+#
+# [alias]
+#     clone-for-worktrees = "!sh <path to file>/git-clone-bare-for-worktrees.sh"
 
 # Initialize variables
 branch=""
